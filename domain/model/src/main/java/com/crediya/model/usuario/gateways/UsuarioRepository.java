@@ -8,4 +8,5 @@ public interface UsuarioRepository {
     Mono<Usuario> save(Usuario usuario);
     Flux<Usuario> findAll();
     Mono<Usuario> findById(Integer id);
+    Mono<Usuario> findByEmail(String email);
 }
