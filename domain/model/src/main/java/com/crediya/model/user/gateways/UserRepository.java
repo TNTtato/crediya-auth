@@ -9,4 +9,5 @@ public interface UserRepository {
     Flux<User> findAll();
     Mono<User> findById(Integer id);
     Mono<User> findByEmail(String email);
+    Mono<User> findByCardId(String cardId);
 }

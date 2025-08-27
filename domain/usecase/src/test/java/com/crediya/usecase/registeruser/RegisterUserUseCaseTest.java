@@ -7,10 +7,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +34,7 @@ class RegisterUserUseCaseTest {
     void shouldRegisterUser(User input, User saved) {
         Mockito.when(repository.save(Mockito.any())).thenReturn(Mono.just(saved));
         Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(Mono.empty());
+        Mockito.when(repository.findByCardId(Mockito.anyString())).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.execute(input))
                 .expectNextMatches(user -> user.getLastName().equals(input.getLastName()))
@@ -45,7 +48,7 @@ class RegisterUserUseCaseTest {
         StepVerifier.create(useCase.execute(in))
                 .expectErrorSatisfies(t -> {
                     assertInstanceOf(UserValidationException.class, t);
-                    assertTrue(t.getMessage().contains(errMessage));
+                    assertEquals(((UserValidationException) t).getCauses().toString(), errMessage);
                 })
                 .verify();
     }
@@ -56,6 +59,7 @@ class RegisterUserUseCaseTest {
     void shouldThrowBusinessException(User input, String errMessage, Class<? extends Throwable> expected) {
         Mockito.when(repository.findByEmail("doe@test.com")).thenReturn(Mono.just(new User()));
         Mockito.when(repository.findByEmail("doe@example.com")).thenReturn(Mono.empty());
+        Mockito.when(repository.findByCardId(Mockito.anyString())).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.execute(input))
                 .expectErrorSatisfies(t -> {

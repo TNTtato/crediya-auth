@@ -14,11 +14,13 @@ public class RegisterUserUseCase {
 
     private final UserRepository userRepository;
 
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
     public Mono<User> execute(User user) {
 
         List<String> validationErrors = validateEntry(user);
         if (!validationErrors.isEmpty()) {
-            return Mono.error(new UserValidationException(validationErrors.toString()));
+            return Mono.error(new UserValidationException("User validation failed", validationErrors));
         }
 
         return userRepository.findByEmail(user.getEmail())
@@ -26,8 +28,11 @@ public class RegisterUserUseCase {
                 .switchIfEmpty(Mono.defer(() -> {
                     if (notValidBaseSalary(user.getBaseSalary()))
                         throw new NotValidBaseSalaryException("Base salary not in range");
-
-                    return userRepository.save(user);
+                    return userRepository.findByCardId(user.getCardId())
+                            .flatMap(exists -> Mono.<User>error(new CardIdAlreadyInUseException("The user's CARD ID [" + user.getCardId() +"] is already in user")))
+                            .switchIfEmpty(Mono.defer(() -> {
+                                return userRepository.save(user);
+                            }));
                 }));
     }
 
@@ -38,8 +43,11 @@ public class RegisterUserUseCase {
 
         List<String> validationErrors = new ArrayList<>();
 
-        if (user.getEmail() == null || user.getEmail().isEmpty())
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
             validationErrors.add("Email is required");
+        } else if (!user.getEmail().matches(EMAIL_REGEX)) {
+            validationErrors.add("Email format is invalid");
+        }
         if (user.getLastName() == null || user.getLastName().isEmpty()
             || user.getName() == null || user.getName().isEmpty())
             validationErrors.add("Full name is required");
