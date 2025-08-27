@@ -13,18 +13,21 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UsuarioEntity {
+public class UserEntity {
     @Id
     @Column("id_usuario")
-    Integer idUsuario;
-    String nombre;
-    String apellido;
+    Integer userId;
+    @Column("nombre")
+    String name;
+    @Column("apellido")
+    String lastName;
     String email;
-    String telefono;
+    @Column("telefono")
+    String phone;
     @Column("documento_identidad")
-    String documentoIdentidad;
+    String cardId;
     @Column("salario_base")
-    Double salarioBase;
+    Double baseSalary;
     @Column("id_rol")
-    RolEntity idRol;
+    Integer roleId;
 }

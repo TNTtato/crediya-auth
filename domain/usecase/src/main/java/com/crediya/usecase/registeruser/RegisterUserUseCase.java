@@ -1,7 +1,7 @@
 package com.crediya.usecase.registeruser;
 
-import com.crediya.model.usuario.Usuario;
-import com.crediya.model.usuario.gateways.UsuarioRepository;
+import com.crediya.model.user.User;
+import com.crediya.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -12,40 +12,40 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RegisterUserUseCase {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository userRepository;
 
-    public Mono<Usuario> execute(Usuario usuario) {
+    public Mono<User> execute(User user) {
 
-        List<String> validationErrors = validateEntry(usuario);
+        List<String> validationErrors = validateEntry(user);
         if (!validationErrors.isEmpty()) {
             return Mono.error(new UserValidationException(validationErrors.toString()));
         }
 
-        return usuarioRepository.findByEmail(usuario.getEmail())
-                .flatMap(exists -> Mono.<Usuario>error(new EmailAlreadyInUseException("Email already in use")))
+        return userRepository.findByEmail(user.getEmail())
+                .flatMap(exists -> Mono.<User>error(new EmailAlreadyInUseException("Email already in use")))
                 .switchIfEmpty(Mono.defer(() -> {
-                    if (notValidBaseSalary(usuario.getSalarioBase()))
+                    if (notValidBaseSalary(user.getBaseSalary()))
                         throw new NotValidBaseSalaryException("Base salary not in range");
 
-                    return usuarioRepository.save(usuario);
+                    return userRepository.save(user);
                 }));
     }
 
-    private List<String> validateEntry(Usuario usuario) {
+    private List<String> validateEntry(User user) {
 
-        if (usuario == null)
+        if (user == null)
             return Collections.singletonList("User is null");
 
         List<String> validationErrors = new ArrayList<>();
 
-        if (usuario.getEmail() == null || usuario.getEmail().isEmpty())
+        if (user.getEmail() == null || user.getEmail().isEmpty())
             validationErrors.add("Email is required");
-        if (usuario.getApellido() == null || usuario.getApellido().isEmpty()
-            || usuario.getNombre() == null || usuario.getNombre().isEmpty())
+        if (user.getLastName() == null || user.getLastName().isEmpty()
+            || user.getName() == null || user.getName().isEmpty())
             validationErrors.add("Full name is required");
-        if (usuario.getDocumentoIdentidad() == null || usuario.getDocumentoIdentidad().isEmpty())
+        if (user.getCardId() == null || user.getCardId().isEmpty())
             validationErrors.add("ID document is required");
-        if (usuario.getSalarioBase() == null)
+        if (user.getBaseSalary() == null)
             validationErrors.add("Base salary is required");
 
         return validationErrors;

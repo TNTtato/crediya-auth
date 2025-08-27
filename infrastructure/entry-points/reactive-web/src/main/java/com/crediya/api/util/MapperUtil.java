@@ -1,20 +1,20 @@
 package com.crediya.api.util;
 
 import com.crediya.api.model.RegisterUserRequest;
-import com.crediya.model.usuario.Usuario;
+import com.crediya.model.user.User;
 
 public class MapperUtil {
 
-    public static Usuario fromRequestToUserDomain(RegisterUserRequest registerUserRequest) {
-        Usuario usuario = new Usuario();
-        usuario.setNombre(registerUserRequest.name());
-        usuario.setApellido(registerUserRequest.lastName());
-        usuario.setEmail(registerUserRequest.email());
-        usuario.setDocumentoIdentidad(registerUserRequest.idDocument());
-        usuario.setIdRol(registerUserRequest.roleId());
-        usuario.setTelefono(registerUserRequest.phone());
-        usuario.setSalarioBase(registerUserRequest.baseSalary());
+    public static User fromRequestToUserDomain(RegisterUserRequest registerUserRequest) {
+        User user = new User();
+        user.setName(registerUserRequest.name());
+        user.setLastName(registerUserRequest.lastName());
+        user.setEmail(registerUserRequest.email());
+        user.setCardId(registerUserRequest.cardId());
+        user.setRoleId(registerUserRequest.roleId());
+        user.setPhone(registerUserRequest.phone());
+        user.setBaseSalary(registerUserRequest.baseSalary());
 
-        return usuario;
+        return user;
     }
 }
