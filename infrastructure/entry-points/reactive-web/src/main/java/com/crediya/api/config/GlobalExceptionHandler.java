@@ -1,7 +1,9 @@
 package com.crediya.api.config;
 
+import com.crediya.usecase.registeruser.CardIdAlreadyInUseException;
 import com.crediya.usecase.registeruser.EmailAlreadyInUseException;
 import com.crediya.usecase.registeruser.NotValidBaseSalaryException;
+import com.crediya.usecase.registeruser.UserValidationException;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
@@ -46,7 +48,21 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                     "uri", serverRequest.uri(),
                     "timestamp", new Date()
             ));
-        //DuplicateKeyException
+        if (error instanceof CardIdAlreadyInUseException ciau)
+            return ServerResponse.badRequest().bodyValue(Map.of(
+                    "message", ciau.getMessage(),
+                    "uri", serverRequest.uri(),
+                    "timestamp", new Date()
+            ));
+
+        if (error instanceof UserValidationException uv)
+            return ServerResponse.badRequest().bodyValue(Map.of(
+                    "message", uv.getMessage(),
+                    "uri", serverRequest.uri(),
+                    "timestamp", new Date(),
+                    "causes", uv.getCauses()
+            ));
+
         return ServerResponse.badRequest().bodyValue(Map.of("message", error.getLocalizedMessage()));
     }
 }
