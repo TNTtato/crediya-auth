@@ -7,4 +7,6 @@ dependencies {
     implementation 'org.reactivecommons.utils:object-mapper-api:0.1.0'
     //implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     //implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.10'
+    testImplementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.10'
 }

@@ -18,6 +18,11 @@ adapters:
     port: 3307
     password: "root"
     username: "root"
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-doc
 
 management:
   endpoints:
