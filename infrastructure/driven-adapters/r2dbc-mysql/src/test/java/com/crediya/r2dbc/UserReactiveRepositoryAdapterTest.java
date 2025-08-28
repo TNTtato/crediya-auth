@@ -9,12 +9,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.domain.Example;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +30,9 @@ class UserReactiveRepositoryAdapterTest {
 
     @Mock
     ObjectMapper mapper;
+
+    @Mock
+    TransactionalOperator txOp;
 
     @Test
     void mustFindValueById() {
@@ -67,12 +72,18 @@ class UserReactiveRepositoryAdapterTest {
         when(repository.save(entity)).thenReturn(Mono.just(entity));
         when(mapper.map(any(), eq(UserEntity.class))).thenReturn(entity);
         when(mapper.map(any(), eq(User.class))).thenReturn(user);
+        when(txOp.transactional((Mono<Object>) any())).thenReturn(Mono.empty());
+
+        when(txOp.transactional((Mono<User>) any())).thenAnswer(inv -> inv.getArgument(0));
 
         Mono<User> result = repositoryAdapter.save(user);
 
         StepVerifier.create(result)
                 .expectNextMatches(value -> value.getEmail().equals(user.getEmail()))
                 .verifyComplete();
+
+        // Verificar que se aplicó transactional
+        verify(txOp).transactional((Mono<User>) any());
     }
 
 }
