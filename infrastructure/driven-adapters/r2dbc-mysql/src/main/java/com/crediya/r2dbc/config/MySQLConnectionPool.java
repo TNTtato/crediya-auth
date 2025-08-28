@@ -31,7 +31,7 @@ public class MySQLConnectionPool {
 
         ConnectionPoolConfiguration poolConfiguration = ConnectionPoolConfiguration.builder()
                 .connectionFactory(MySqlConnectionFactory.from(dbConfiguration))
-                .name("api-postgres-connection-pool")
+                .name("api-mysql-connection-pool")
                 .initialSize(INITIAL_SIZE)
                 .maxSize(MAX_SIZE)
                 .maxIdleTime(Duration.ofMinutes(MAX_IDLE_TIME))
