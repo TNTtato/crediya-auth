@@ -19,4 +19,5 @@ public class User {
     private String phone;
     private Integer roleId;
     private Double baseSalary;
+    private String password;
 }

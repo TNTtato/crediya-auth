@@ -1,6 +1,7 @@
 package com.crediya.usecase.registeruser;
 
 import com.crediya.model.user.User;
+import com.crediya.model.user.gateways.PasswordEncoder;
 import com.crediya.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,14 +20,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterUserUseCaseTest {
 
+    private static final String FIXED_ENCODED_PASSWORD = "123456";
+
     UserRepository repository;
+    PasswordEncoder encoder;
 
     RegisterUserUseCase useCase;
 
     @BeforeEach
     void setUp() {
         repository = Mockito.mock(UserRepository.class);
-        useCase = new RegisterUserUseCase(repository);
+        this.encoder = Mockito.mock(PasswordEncoder.class);
+        useCase = new RegisterUserUseCase(repository, encoder);
+
+        Mockito.when(encoder.encode(Mockito.anyString())).thenReturn(FIXED_ENCODED_PASSWORD);
     }
 
     @ParameterizedTest
@@ -70,9 +77,9 @@ class RegisterUserUseCaseTest {
     }
 
     static Stream<Arguments> businessValidationsTestCases() {
-        User existingMail = new User(1, "John", "doe", "doe@test.com", "CC1234", "+57 1234", 1, 3000000.0);
-        User bellowSalaryRange = new User(1, "John", "doe", "doe@example.com", "CC1234", "+57 1234", 1, -1.0);
-        User aboveSalaryRange = new User(1, "John", "doe", "doe@example.com", "CC1234", "+57 1234", 1, 15000001.0);
+        User existingMail = new User(1, "John", "doe", "doe@test.com", "CC1234", "+57 1234", 1, 3000000.0, "1234");
+        User bellowSalaryRange = new User(1, "John", "doe", "doe@example.com", "CC1234", "+57 1234", 1, -1.0, "1234");
+        User aboveSalaryRange = new User(1, "John", "doe", "doe@example.com", "CC1234", "+57 1234", 1, 15000001.0, "1234");
         return Stream.of(
                 Arguments.of(existingMail, "Email already in use", EmailAlreadyInUseException.class),
                 Arguments.of(bellowSalaryRange, "Base salary not in range", NotValidBaseSalaryException.class),
@@ -81,11 +88,11 @@ class RegisterUserUseCaseTest {
     }
 
     static Stream<Arguments> missingFieldsTestCases() {
-        User emptyRequired = new User(1, "", "", "", "", "+57 1234", 1, 3000000.0);
+        User emptyRequired = new User(1, "", "", "", "", "+57 1234", 1, 3000000.0, "1234");
         User allRequiredFieldsMissing = new User();
         User nullUser  = null;
         return Stream.of(
-                Arguments.of(allRequiredFieldsMissing, "[Email is required, Full name is required, ID document is required, Base salary is required]"),
+                Arguments.of(allRequiredFieldsMissing, "[Email is required, Full name is required, ID document is required, Base salary is required, Password is required]"),
                 Arguments.of(emptyRequired, "[Email is required, Full name is required, ID document is required]"),
                 Arguments.of(nullUser, "[User is null]")
         );
@@ -93,8 +100,8 @@ class RegisterUserUseCaseTest {
 
     static Stream<Arguments> registerTestCases() {
         return Stream.of(
-                Arguments.of(new User(1, "John", "Doe", "jdoe@example.com", "CC11111", "+12345", 1, 3000000.0),
-                            new User(1, "John", "Doe", "jdoe@example.com", "CC11111", "+12345", 1, 3000000.0)
+                Arguments.of(new User(1, "John", "Doe", "jdoe@example.com", "CC11111", "+12345", 1, 3000000.0, "1234"),
+                            new User(1, "John", "Doe", "jdoe@example.com", "CC11111", "+12345", 1, 3000000.0, "1234")
                 )
         );
     }

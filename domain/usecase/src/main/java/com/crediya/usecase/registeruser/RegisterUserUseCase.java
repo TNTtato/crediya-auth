@@ -1,6 +1,7 @@
 package com.crediya.usecase.registeruser;
 
 import com.crediya.model.user.User;
+import com.crediya.model.user.gateways.PasswordEncoder;
 import com.crediya.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -13,6 +14,7 @@ import java.util.List;
 public class RegisterUserUseCase {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
@@ -31,6 +33,7 @@ public class RegisterUserUseCase {
                     return userRepository.findByCardId(user.getCardId())
                             .flatMap(exists -> Mono.<User>error(new CardIdAlreadyInUseException("The user's CARD ID [" + user.getCardId() +"] is already in user")))
                             .switchIfEmpty(Mono.defer(() -> {
+                                user.setPassword(passwordEncoder.encode(user.getPassword()));
                                 return userRepository.save(user);
                             }));
                 }));
@@ -55,6 +58,8 @@ public class RegisterUserUseCase {
             validationErrors.add("ID document is required");
         if (user.getBaseSalary() == null)
             validationErrors.add("Base salary is required");
+        if (user.getPassword() == null || user.getPassword().isEmpty())
+            validationErrors.add("Password is required");
 
         return validationErrors;
     }
