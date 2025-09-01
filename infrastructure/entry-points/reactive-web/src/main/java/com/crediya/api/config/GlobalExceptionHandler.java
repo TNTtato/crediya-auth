@@ -1,10 +1,10 @@
 package com.crediya.api.config;
 
 import com.crediya.api.model.ApiError;
-import com.crediya.usecase.registeruser.CardIdAlreadyInUseException;
-import com.crediya.usecase.registeruser.EmailAlreadyInUseException;
-import com.crediya.usecase.registeruser.NotValidBaseSalaryException;
-import com.crediya.usecase.registeruser.UserValidationException;
+import com.crediya.usecase.exception.CardIdAlreadyInUseException;
+import com.crediya.usecase.exception.EmailAlreadyInUseException;
+import com.crediya.usecase.exception.NotValidBaseSalaryException;
+import com.crediya.usecase.exception.UserValidationException;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Configuration
 public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
@@ -38,6 +37,8 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
     }
 
     private Mono<ServerResponse> renderException(ServerRequest request) {
+        Mono.just(request).map(this::getError).flatMap(Mono::error)
+                .onErrorResume(EmailAlreadyInUseException.class, e -> buildErrorResponse(HttpStatus.CONFLICT, request, e.getMessage()));
         Throwable error = getError(request);
 
         if (error instanceof EmailAlreadyInUseException e) {
