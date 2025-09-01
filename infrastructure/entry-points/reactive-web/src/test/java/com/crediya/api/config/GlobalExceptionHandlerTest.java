@@ -1,9 +1,9 @@
 package com.crediya.api.config;
 
-import com.crediya.usecase.registeruser.CardIdAlreadyInUseException;
-import com.crediya.usecase.registeruser.EmailAlreadyInUseException;
-import com.crediya.usecase.registeruser.NotValidBaseSalaryException;
-import com.crediya.usecase.registeruser.UserValidationException;
+import com.crediya.usecase.exception.CardIdAlreadyInUseException;
+import com.crediya.usecase.exception.EmailAlreadyInUseException;
+import com.crediya.usecase.exception.NotValidBaseSalaryException;
+import com.crediya.usecase.exception.UserValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.web.WebProperties;

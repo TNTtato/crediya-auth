@@ -3,6 +3,10 @@ package com.crediya.usecase.registeruser;
 import com.crediya.model.user.User;
 import com.crediya.model.user.gateways.PasswordEncoder;
 import com.crediya.model.user.gateways.UserRepository;
+import com.crediya.usecase.exception.CardIdAlreadyInUseException;
+import com.crediya.usecase.exception.EmailAlreadyInUseException;
+import com.crediya.usecase.exception.NotValidBaseSalaryException;
+import com.crediya.usecase.exception.UserValidationException;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 

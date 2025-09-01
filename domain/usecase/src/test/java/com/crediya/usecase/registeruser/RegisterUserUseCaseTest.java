@@ -3,17 +3,18 @@ package com.crediya.usecase.registeruser;
 import com.crediya.model.user.User;
 import com.crediya.model.user.gateways.PasswordEncoder;
 import com.crediya.model.user.gateways.UserRepository;
+import com.crediya.usecase.exception.EmailAlreadyInUseException;
+import com.crediya.usecase.exception.NotValidBaseSalaryException;
+import com.crediya.usecase.exception.UserValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;

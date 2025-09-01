@@ -1,6 +1,4 @@
-package com.crediya.usecase.registeruser;
-
-import java.util.function.Supplier;
+package com.crediya.usecase.exception;
 
 public class CardIdAlreadyInUseException extends IllegalArgumentException{
     public CardIdAlreadyInUseException(String s) {
