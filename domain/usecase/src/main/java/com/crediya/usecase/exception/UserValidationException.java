@@ -1,4 +1,4 @@
-package com.crediya.usecase.registeruser;
+package com.crediya.usecase.exception;
 
 import java.util.List;
 
