@@ -1,10 +1,7 @@
 package com.crediya.api.config;
 
 import com.crediya.api.model.ApiError;
-import com.crediya.usecase.exception.CardIdAlreadyInUseException;
-import com.crediya.usecase.exception.EmailAlreadyInUseException;
-import com.crediya.usecase.exception.NotValidBaseSalaryException;
-import com.crediya.usecase.exception.UserValidationException;
+import com.crediya.usecase.exception.*;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
@@ -37,8 +34,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
     }
 
     private Mono<ServerResponse> renderException(ServerRequest request) {
-        Mono.just(request).map(this::getError).flatMap(Mono::error)
-                .onErrorResume(EmailAlreadyInUseException.class, e -> buildErrorResponse(HttpStatus.CONFLICT, request, e.getMessage()));
+
         Throwable error = getError(request);
 
         if (error instanceof EmailAlreadyInUseException e) {
@@ -52,6 +48,14 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
         }
         if (error instanceof UserValidationException e) {
             return buildErrorResponse(HttpStatus.BAD_REQUEST, request, e.getMessage(), e.getCauses());
+        }
+
+        if (error instanceof InvalidPasswordException e) {
+            return buildErrorResponse(HttpStatus.BAD_REQUEST, request, e.getMessage());
+        }
+
+        if (error instanceof UserNotFoundException e) {
+            return buildErrorResponse(HttpStatus.BAD_REQUEST, request, e.getMessage());
         }
 
         // fallback

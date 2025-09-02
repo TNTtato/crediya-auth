@@ -21,13 +21,12 @@ public class LoginUseCase {
         return userRepository.findByEmail(email)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new UserNotFoundException("User not found!"))))
                 .flatMap(u -> validatePassword(u, password))
-                .flatMap(tokenProvider::generateToken)
-                .doOnError(err -> System.out.println(err.getMessage()));
+                .flatMap(tokenProvider::generateToken);
     }
 
     private Mono<User> validatePassword(User user, String raw) {
         return Mono.just(user)
                 .filter(u -> passwordEncoder.match(raw, u.getPassword()))
-                .switchIfEmpty(Mono.error(new InvalidPasswordException("Invalid password!")));
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new InvalidPasswordException("Invalid password!"))));
     }
 }

@@ -1,7 +1,9 @@
 package com.crediya.api;
 
+import com.crediya.api.model.LoginRequest;
 import com.crediya.api.model.RegisterUserRequest;
 import com.crediya.api.util.MapperUtil;
+import com.crediya.usecase.login.LoginUseCase;
 import com.crediya.usecase.registeruser.RegisterUserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.reactivecommons.utils.ObjectMapper;
@@ -18,6 +20,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class HandlerV1 {
     private final RegisterUserUseCase useCase;
+    private final LoginUseCase loginUseCase;
     private final ObjectMapper mapper;
     private static final Logger log = LoggerFactory.getLogger(HandlerV1.class);
 
@@ -33,5 +36,17 @@ public class HandlerV1 {
                         .created(serverRequest.uri())
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(MapperUtil.fromUserDomainToResponse(saved)));
+    }
+
+    public Mono<ServerResponse> listenLoginUseCase(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(LoginRequest.class)
+                .flatMap(r -> {
+                    log.info("Received LoginRequest");
+                    return loginUseCase.execute(r.email(), r.password());
+                })
+                .flatMap(t -> ServerResponse
+                        .ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(t.getToken()));
     }
 }

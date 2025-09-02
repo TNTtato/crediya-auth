@@ -35,3 +35,7 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:9010"
+
+jwt:
+  secret: "WQ1KHfpOuqSEYaDD7JDygKXguEu8NDohk8zcHrI2IJMiWjsi/ac4r6+RXUv9ljC6"
+  expiration: 900000

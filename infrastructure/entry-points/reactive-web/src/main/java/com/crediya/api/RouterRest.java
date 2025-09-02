@@ -93,7 +93,8 @@ public class RouterRest {
     public RouterFunction<ServerResponse> routerFunction(HandlerV1 handlerV1, HandlerV2 handlerV2) {
         return RouterFunctions
             .route()
-            .path("/api/v1", builder -> builder.POST("/usuarios", handlerV1::listenRegisterUserUseCase))
-            .build();
+                .path("/api/v1", builder -> builder.POST("/usuarios", handlerV1::listenRegisterUserUseCase))
+                .path("/api/v1", builder -> builder.POST("/login", handlerV1::listenLoginUseCase))
+                .build();
         }
 }
