@@ -1,6 +1,7 @@
 package com.crediya.api.util;
 
 import com.crediya.api.model.RegisterUserRequest;
+import com.crediya.api.model.RegisterUserResponse;
 import com.crediya.model.user.User;
 
 public class MapperUtil {
@@ -14,7 +15,14 @@ public class MapperUtil {
         user.setRoleId(registerUserRequest.roleId());
         user.setPhone(registerUserRequest.phone());
         user.setBaseSalary(registerUserRequest.baseSalary());
-
+        user.setPassword(registerUserRequest.password());
         return user;
+    }
+
+    public static RegisterUserResponse fromUserDomainToResponse(User user) {
+        return new RegisterUserResponse(
+                String.format("%s %s", user.getName(), user.getLastName()),
+                user.getRoleId()
+        );
     }
 }

@@ -17,6 +17,10 @@ public record RegisterUserRequest(
         @Schema(description = "Correo electrónico único", example = "juan.perez@example.com")
         String email,
 
+        @Schema(description = "Contraseña del usuario", example = "*******")
+        @JsonProperty("password")
+        String password,
+
         @Schema(description = "Documento de identidad", example = "1020304050")
         @JsonProperty("documento_identidad")
         String cardId,

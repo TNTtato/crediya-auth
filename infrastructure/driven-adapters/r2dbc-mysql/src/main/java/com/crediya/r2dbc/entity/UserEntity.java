@@ -21,7 +21,10 @@ public class UserEntity {
     String name;
     @Column("apellido")
     String lastName;
+    @Column("email")
     String email;
+    @Column("password")
+    String password;
     @Column("telefono")
     String phone;
     @Column("documento_identidad")

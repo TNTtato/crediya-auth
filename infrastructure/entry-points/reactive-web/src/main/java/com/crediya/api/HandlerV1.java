@@ -25,13 +25,13 @@ public class HandlerV1 {
     public Mono<ServerResponse> listenRegisterUserUseCase(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(RegisterUserRequest.class)
                 .flatMap(r -> {
-                    log.info("Received RegisterUserRequest [{}]", r);
+                    log.info("Received RegisterUserRequest");
                     return useCase.execute(MapperUtil.fromRequestToUserDomain(r));
                 })
                 .flatMap(
                 saved -> ServerResponse
                         .created(serverRequest.uri())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(saved));
+                        .bodyValue(MapperUtil.fromUserDomainToResponse(saved)));
     }
 }
