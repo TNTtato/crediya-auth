@@ -5,6 +5,8 @@ import com.crediya.model.token.gateways.TokenProvider;
 import com.crediya.model.user.User;
 import com.crediya.model.user.gateways.PasswordEncoder;
 import com.crediya.model.user.gateways.UserRepository;
+import com.crediya.usecase.exception.InvalidPasswordException;
+import com.crediya.usecase.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -17,14 +19,15 @@ public class LoginUseCase {
 
     public Mono<Token> execute(String email, String password) {
         return userRepository.findByEmail(email)
-                .switchIfEmpty(Mono.error(new RuntimeException("User not found!")))
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new UserNotFoundException("User not found!"))))
                 .flatMap(u -> validatePassword(u, password))
-                .flatMap(tokenProvider::generateToken);
+                .flatMap(tokenProvider::generateToken)
+                .doOnError(err -> System.out.println(err.getMessage()));
     }
 
     private Mono<User> validatePassword(User user, String raw) {
         return Mono.just(user)
                 .filter(u -> passwordEncoder.match(raw, u.getPassword()))
-                .switchIfEmpty(Mono.error(new RuntimeException("Invalid password!")));
+                .switchIfEmpty(Mono.error(new InvalidPasswordException("Invalid password!")));
     }
 }
