@@ -82,7 +82,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
     private Mono<ServerResponse> buildErrorResponse(HttpStatus status, ServerRequest request, String message, List<String> causes) {
         ApiError apiError = new ApiError(
                 message,
-                request.uri().toString(),
+                request.path(),
                 new Date(),
                 causes
         );

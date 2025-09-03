@@ -2,6 +2,8 @@ package com.crediya.api;
 
 import com.crediya.api.model.ApiError;
 import com.crediya.api.model.RegisterUserRequest;
+import com.crediya.api.opendocs.LoginDoc;
+import com.crediya.api.opendocs.RegisterUserDoc;
 import com.crediya.model.user.User;
 import com.crediya.model.utils.AppRoutes;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,68 +30,14 @@ public class RouterRest {
             @RouterOperation(
                     path = "/api/v1/usuarios",
                     method = RequestMethod.POST,
-                    beanClass = HandlerV1.class,
-                    beanMethod = "listenRegisterUserUseCase",
-                    operation = @Operation(
-                            operationId = "registerUser",
-                            summary = "Register a new user",
-                            tags = {"User"},
-                            requestBody = @RequestBody(
-                                    required = true,
-                                    content = @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = RegisterUserRequest.class),
-                                            examples = {
-                                                    @ExampleObject(
-                                                            name = "Nuevo usuario",
-                                                            summary = "Ejemplo de registro de usuario",
-                                                            value = """
-                                {
-                                  "nombre": "Juan",
-                                  "apellido": "Pérez",
-                                  "email": "juan.perez@test.com",
-                                  "documento_identidad": "12345678",
-                                  "telefono": "3001234567",
-                                  "id_rol": 2,
-                                  "salario_base": 3000000.0
-                                }
-                                """
-                                                    )
-                                            }
-                                    )
-                            ),
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "201",
-                                            description = "User created successfully",
-                                            content = @Content(
-                                                    mediaType = "application/json",
-                                                    schema = @Schema(implementation = User.class),
-                                                    examples = {
-                                                            @ExampleObject(
-                                                                    name = "Usuario creado",
-                                                                    summary = "Ejemplo de respuesta de creación",
-                                                                    value = """
-                                    {
-                                      "userId": 1,
-                                      "name": "Juan",
-                                      "lastName": "Pérez",
-                                      "email": "juan.perez@test.com",
-                                      "idCard": "12345678",
-                                      "phone": "3001234567",
-                                      "roleId": 2,
-                                      "baseSalary": 5000.0
-                                    }
-                                    """
-                                                            )
-                                                    }
-                                            )
-                                    ),
-                                    @ApiResponse(responseCode = "400", description = "Validation Errors", content = @Content(schema = @Schema(implementation = ApiError.class))),
-                                    @ApiResponse(responseCode = "409", description = "User Already Exists", content = @Content(schema = @Schema(implementation = ApiError.class))),
-                                    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class)))
-                            }
-                    )
+                    beanClass = RegisterUserDoc.class,
+                    beanMethod = "registerUserDoc"
+            ),
+            @RouterOperation(
+                    path = "/api/v1/login",
+                    method = RequestMethod.POST,
+                    beanClass = LoginDoc.class,
+                    beanMethod = "loginDoc"
             )
     })
     @Bean

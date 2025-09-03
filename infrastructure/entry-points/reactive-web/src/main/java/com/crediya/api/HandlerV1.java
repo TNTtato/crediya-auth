@@ -1,6 +1,7 @@
 package com.crediya.api;
 
 import com.crediya.api.model.LoginRequest;
+import com.crediya.api.model.LoginResponse;
 import com.crediya.api.model.RegisterUserRequest;
 import com.crediya.api.util.MapperUtil;
 import com.crediya.usecase.login.LoginUseCase;
@@ -48,6 +49,6 @@ public class HandlerV1 {
                 .flatMap(t -> ServerResponse
                         .ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(t.getToken()));
+                        .bodyValue(new LoginResponse(t.getToken())));
     }
 }
