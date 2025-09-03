@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table(name="rol")
@@ -13,7 +14,10 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 public class RoleEntity {
     @Id
-    Integer UniqueID;
+    @Column("UniqueID")
+    Integer id;
+    @Column("nombre")
     String name;
+    @Column("descripcion")
     String description;
 }

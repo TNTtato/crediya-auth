@@ -26,6 +26,7 @@ public class HandlerV1 {
 
     //@PreAuthorize("hasRole('permissionPOST')")
     public Mono<ServerResponse> listenRegisterUserUseCase(ServerRequest serverRequest) {
+        log.info("listenRegisterUserUseCase");
         return serverRequest.bodyToMono(RegisterUserRequest.class)
                 .flatMap(r -> {
                     log.info("Received RegisterUserRequest");

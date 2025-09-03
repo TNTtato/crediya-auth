@@ -1,10 +1,10 @@
-package com.crediya.r2dbc;
+package com.crediya.r2dbc.adapters;
 
 import com.crediya.model.user.User;
 import com.crediya.model.user.gateways.UserRepository;
+import com.crediya.r2dbc.UserReactiveRepository;
 import com.crediya.r2dbc.entity.UserEntity;
 import com.crediya.r2dbc.helper.ReactiveAdapterOperations;
-import lombok.RequiredArgsConstructor;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.reactive.TransactionalOperator;
