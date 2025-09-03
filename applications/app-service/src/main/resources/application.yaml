@@ -23,7 +23,12 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-doc
-
+  webjars:
+    prefix: /webjars/swagger-ui
+routes:
+  base-v1: /api/v1
+  login: /login
+  user: /usuarios
 management:
   endpoints:
     web:

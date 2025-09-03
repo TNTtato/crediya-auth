@@ -1,12 +1,16 @@
 package com.crediya.api.config;
 
 import com.crediya.api.model.ApiError;
+import com.crediya.model.exception.AccessDeniedException;
+import com.crediya.model.exception.AuthException;
 import com.crediya.usecase.exception.*;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
@@ -17,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Configuration
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
     public GlobalExceptionHandler(ErrorAttributes errorAttributes,
@@ -56,6 +61,14 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
         if (error instanceof UserNotFoundException e) {
             return buildErrorResponse(HttpStatus.BAD_REQUEST, request, e.getMessage());
+        }
+
+        if (error instanceof AuthException  e) {
+            return buildErrorResponse(HttpStatus.FORBIDDEN, request, e.getMessage());
+        }
+
+        if (error instanceof AccessDeniedException e) {
+            return buildErrorResponse(HttpStatus.UNAUTHORIZED, request, e.getMessage());
         }
 
         // fallback
